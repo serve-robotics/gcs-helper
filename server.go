@@ -6,11 +6,12 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/NYTimes/gcs-helper/v3/handlers"
+	"github.com/rs/cors"
 )
 
 func getHandler(c handlers.Config, client *storage.Client, hc *http.Client) http.HandlerFunc {
-	proxyHandler := handlers.Proxy(c, hc)
-	mapHandler := handlers.Map(c, client)
+	proxyHandler := cors.Default().Handler(handlers.Proxy(c, hc))
+	mapHandler := cors.Default().Handler(handlers.Map(c, client))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch {
